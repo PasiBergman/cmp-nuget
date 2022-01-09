@@ -91,8 +91,6 @@ local version_for_sort = function(rev_numbers)
     version = version .. ver_part .. "."
   end
 
-  print("version: " .. version)
-
   return version
 end
 

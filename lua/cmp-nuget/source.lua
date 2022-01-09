@@ -51,11 +51,8 @@ function Source:complete(params, callback)
       find_version = cur_col >= idx_after_version
     end
   end
-  print("find_version: " .. tostring(find_version))
 
   if package ~= nil and package ~= "" and #package > 3 and not find_version then
-    package = string.gsub(package, "%.$", "")
-    print("package: " .. package)
     self.nuget:get_packages(callback, string.lower(package))
   elseif package ~= nil and package ~= "" and #package > 3 and find_version then
     self.nuget:get_versions(callback, package)
