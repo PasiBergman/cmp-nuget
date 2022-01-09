@@ -31,8 +31,6 @@ Source.new = function(overrides)
     self.keyword_pattern = [[\k\+]]
   end
 
-  self.trigger_actions = self.config.trigger_actions
-
   return self
 end
 
