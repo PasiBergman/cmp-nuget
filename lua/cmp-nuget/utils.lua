@@ -37,14 +37,71 @@ Utils.handle_response = function(response, handle_item)
   return items
 end
 
-Utils.get_sort_text = function(config_val, item)
-  if type(config_val) == "function" then
-    return config_val(item)
-  elseif type(config_val) == "string" then
-    return item[config_val]
+local split_version = function(version)
+  local t = {}
+  if version == nil or version == "" then
+    return t
   end
 
-  return nil
+  local period = "."
+  local dash = "-"
+  for str in string.gmatch(version, "([^" .. period .. "]+)") do
+    for str2 in string.gmatch(str, "([^" .. dash .. "]+)") do
+      if str2 == "rc" then
+        str2 = "1rc"
+      end
+      if str2 == "preview" then
+        str2 = "2preview"
+      end
+      table.insert(t, str2)
+    end
+  end
+
+  return t
+end
+
+local reverse_version = function(version_table)
+  if type(version_table) ~= "table" then
+    return version_table
+  end
+
+  local numbers = {}
+
+  for _, ver_part in ipairs(version_table) do
+    local number = tonumber(ver_part)
+    if number ~= nil then
+      number = 999999 - number
+      table.insert(numbers, number)
+    else
+      table.insert(numbers, ver_part)
+    end
+  end
+
+  return numbers
+end
+
+local version_for_sort = function(rev_numbers)
+  if type(rev_numbers) ~= "table" then
+    return rev_numbers
+  end
+
+  local version = ""
+
+  for _, ver_part in ipairs(rev_numbers) do
+    version = version .. ver_part .. "."
+  end
+
+  print("version: " .. version)
+
+  return version
+end
+
+Utils.get_version_sort_text = function(item)
+  local version = split_version(item)
+  local rev_numbers = reverse_version(version)
+  local rev_version = version_for_sort(rev_numbers)
+
+  return rev_version
 end
 
 return Utils

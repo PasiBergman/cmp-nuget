@@ -58,12 +58,11 @@ local get_command = function(callback, curl_url, handle_item)
     curl_url,
   }
 
-  -- command = add_curl_header(command, "X-NuGet-ApiKey", "%s", "NUGET_APIKEY")
-  -- command = add_curl_header(command, "X-NuGet-Client-Version", "%s", "NUGET_CLIENT_VERSION")
-  -- command = add_curl_header(command, "X-NuGet-Protocol-Version", "%s", "NUGET_PROTOCOL_VERSION")
-  -- command = add_curl_header(command, "X-NuGet-Session-Id", "%s", "NUGET_SESSION_ID")
+  command = add_curl_header(command, "X-NuGet-ApiKey", "%s", "NUGET_APIKEY")
+  command = add_curl_header(command, "X-NuGet-Client-Version", "%s", "NUGET_CLIENT_VERSION")
+  command = add_curl_header(command, "X-NuGet-Protocol-Version", "%s", "NUGET_PROTOCOL_VERSION")
+  command = add_curl_header(command, "X-NuGet-Session-Id", "%s", "NUGET_SESSION_ID")
 
-  -- command.cwd = utils.get_cwd()
   command.on_exit = vim.schedule_wrap(function(job)
     local result = table.concat(job:result(), "")
     local items = utils.handle_response(result, handle_item)
@@ -90,7 +89,7 @@ local get_packages_job = function(callback, package, config)
       return {
         label = pg,
         -- insertText = pg,
-        -- filterText = pg, -- config.filter_fn(package, pg),
+        -- filterText = config.filter_fn(package, pg),
         -- sortText = pg,
         -- documentation = nil,
         -- data = pg,
@@ -99,7 +98,7 @@ local get_packages_job = function(callback, package, config)
   ))
 end
 
-local get_versions_job = function(callback, package_id, version, config)
+local get_versions_job = function(callback, package_id, config)
   local url = string.format(
     "https://api-v2v3search-0.nuget.org/autocomplete?id=%s&prerelease=%s&semVerLevel=%s",
     utils.url_encode(package_id),
@@ -113,18 +112,17 @@ local get_versions_job = function(callback, package_id, version, config)
     function(ver)
       return {
         label = ver,
-        insertText = ver,
-        filterText = config.filter_fn(version, ver),
-        sortText = ver,
-        documentation = nil,
-        data = ver,
+        -- insertText = ver,
+        -- filterText = config.filter_fn(version, ver),
+        sortText = utils.get_version_sort_text(ver),
+        -- documentation = nil,
+        -- data = ver,
       }
     end
   ))
 end
 
 local _get_packages = function(self, callback, package, config)
-  --[[
   if self.cache.packages[package] then
     callback { items = self.cache.packages[package], isIncomplete = true }
     return nil
@@ -136,15 +134,11 @@ local _get_packages = function(self, callback, package, config)
     self.cache.packages[package] = args.items
     callback(args)
   end, package, config)
-  --]]
-
-  config = vim.tbl_extend("force", self.config.packages, config or {})
-  local packages_job = get_packages_job(callback, package, config)
 
   return packages_job
 end
 
-local _get_versions = function(self, callback, package_id, version, config)
+local _get_versions = function(self, callback, package_id, config)
   if self.cache.versions[package_id] then
     callback { items = self.cache.versions[package_id], isIncomplete = true }
     return nil
@@ -155,7 +149,7 @@ local _get_versions = function(self, callback, package_id, version, config)
   local versions_job = get_versions_job(function(args)
     self.cache.packages[package_id] = args.items
     callback(args)
-  end, package_id, version, config)
+  end, package_id, config)
 
   return versions_job
 end
@@ -170,8 +164,8 @@ function NuGet:get_packages(callback, package, config)
   return true
 end
 
-function NuGet:get_versions(callback, package_id, version, config)
-  local job = _get_versions(self, callback, package_id, version, config)
+function NuGet:get_versions(callback, package_id, config)
+  local job = _get_versions(self, callback, package_id, config)
 
   if job then
     job:start()
