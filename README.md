@@ -81,7 +81,11 @@ require('cmp').setup({
 })
 ```
 
-The `setup` function accepts an config override table. Default config is
+## Configuration
+
+The `require("cmp-nuget").setup()` function accepts an config override table.
+
+**Default** configuration:
 
 ```lua
 {
@@ -100,6 +104,17 @@ The `setup` function accepts an config override table. Default config is
     },
   },
 }
+```
+
+Example of overriding default configuration during setup.
+
+```lua
+require('cmp-nuget').setup({
+  nuget = {
+    limit = 20,
+    prerelease = true,
+  },
+})
 ```
 
 (\* more information:
