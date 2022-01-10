@@ -3,7 +3,7 @@
 Completion source for [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) helping to
 autocomplete NuGet packages and versions on .csproj files.
 
-**This plugin is in alpha stage, i.e. is under development.**
+**This plugin is in alpha stage, i.e. under development (incl. bugs).**
 Feel free to contribute.
 
 ![cmp-nuget in action](./assets/cmp-nuget.gif?raw=true)
@@ -30,10 +30,7 @@ lvim.plugins = {
     config = function()
       local cmp_nuget = require("cmp-nuget")
       cmp_nuget.setup({})
-      table.insert(lvim.builtin.cmp.sources, {
-        name = "nuget",
-        keyword_length = 3,
-      })
+      table.insert(lvim.builtin.cmp.sources, { name = "nuget" })
       lvim.builtin.cmp.formatting.source_names["nuget"] = "(NuGet)"
     end,
   },
@@ -70,7 +67,7 @@ require('cmp-nuget').setup({})
 require('cmp').setup({
   ...,
   sources = {
-    { name = 'nuget', keyword_length = 3 },
+    { name = 'nuget' },
     ...
   },
   formatting = {
@@ -106,6 +103,11 @@ The `require("cmp-nuget").setup()` function accepts an config override table.
 }
 ```
 
+(\* more information:
+
+- [SemVer2 support for fuget.org](https://github.com/NuGet/Home/wiki/SemVer2-support-for-nuget.org-%28server-side%29)
+- [Package Type](https://github.com/NuGet/Home/wiki/Package-Type-%5BPacking%5D)
+
 Example of overriding default configuration during setup.
 
 ```lua
@@ -118,11 +120,6 @@ require('cmp-nuget').setup({
   },
 })
 ```
-
-(\* more information:
-
-- [SemVer2 support for fuget.org](https://github.com/NuGet/Home/wiki/SemVer2-support-for-nuget.org-%28server-side%29)
-- [Package Type](https://github.com/NuGet/Home/wiki/Package-Type-%5BPacking%5D)
 
 ## Known bugs and limitations
 

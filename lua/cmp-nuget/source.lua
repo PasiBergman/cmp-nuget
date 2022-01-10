@@ -39,12 +39,12 @@ function Source:complete(params, callback)
   local cur_col = params.context.cursor.col
   local package = string.match(cursor_line, '%s*packagereference.*include="([^"]*)"?')
 
-  local _, idx_after_version = string.find(cursor_line, '.*version="')
-  local _, idx_after_version_passed = string.find(cursor_line, '.*version="[^"]*"')
+  local _, idx_after_version = string.find(cursor_line, '.*%sversion="')
+  local _, idx_after_version_passed = string.find(cursor_line, '.*%sversion="[^"]*"')
   local find_version = false
   if idx_after_version then
     if idx_after_version_passed then
-      find_version = cur_col >= idx_after_version and cur_col < idx_after_version_passed
+      find_version = cur_col >= idx_after_version and cur_col <= idx_after_version_passed
     else
       find_version = cur_col >= idx_after_version
     end
