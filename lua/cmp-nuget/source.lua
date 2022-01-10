@@ -37,27 +37,39 @@ end
 function Source:complete(params, callback)
   local cursor_line = string.lower(params.context.cursor_line or "")
   local cur_col = params.context.cursor.col
-  local package = string.match(cursor_line, '%s*packagereference.*include="([^"]*)"?')
 
-  local _, idx_after_version = string.find(cursor_line, '.*%sversion="')
-  local _, idx_after_version_passed = string.find(cursor_line, '.*%sversion="[^"]*"')
+  local package = string.match(cursor_line, 'packagereference.*include="([^"]*)"?')
+  local _, col_before_package = string.find(cursor_line, 'include="')
+  local _, col_after_package = string.find(cursor_line, 'include="[^"]*"')
 
-  local find_version = false
-  -- Does line contain Version="
-  if idx_after_version then
-    -- Does line contain Version="*"
-    if idx_after_version_passed then
-      -- is cursor between quotes on Version=""
-      find_version = cur_col >= idx_after_version and cur_col <= idx_after_version_passed
-    else
-      -- is cursor after quote on Version="
-      find_version = cur_col >= idx_after_version
-    end
+  local _, col_before_version = string.find(cursor_line, '%sversion="')
+  local _, col_after_version = string.find(cursor_line, '%sversion="[^"]*"')
+
+  local search_package = false
+  -- is cursor between quotes on include="" and user has typed at least 3 chars
+  if
+    package ~= nil
+    and #package > 2
+    and col_before_package ~= nil
+    and cur_col > col_before_package
+    and (col_after_package == nil or cur_col <= col_after_package)
+  then
+    search_package = true
   end
 
-  if package ~= nil and #package > 2 and not find_version then
+  local find_version = false
+  -- is cursor between quotes on version=""
+  if
+    col_before_version ~= nil
+    and cur_col > col_before_version
+    and (col_after_version == nil or cur_col <= col_after_version)
+  then
+    find_version = true
+  end
+
+  if search_package then
     self.nuget:get_packages(callback, string.lower(package))
-  elseif package ~= nil and #package > 2 and find_version then
+  elseif find_version and package ~= nil then
     self.nuget:get_versions(callback, package)
   else
     callback { items = {}, isIncomplete = true }
