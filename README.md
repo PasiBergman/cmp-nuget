@@ -41,6 +41,8 @@ lvim.plugins = {
 }
 ```
 
+Remember to `:PackerSync` after changes to plugins.
+
 ### Neovim
 
 For [packer](https://github.com/wbthomason/packer.nvim):
