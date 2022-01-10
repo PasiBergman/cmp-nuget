@@ -35,24 +35,24 @@ Source.new = function(overrides)
 end
 
 function Source:complete(params, callback)
-  local cursor_line = params.context.cursor_line
+  local cursor_line = string.lower(params.context.cursor_line or "")
   local cur_col = params.context.cursor.col
-  local package = string.match(cursor_line, '%s*PackageReference.*Include="([^"]*)"?')
+  local package = string.match(cursor_line, '%s*packagereference.*include="([^"]*)"?')
 
-  local _, idx_after_version = string.find(cursor_line, '.*Version="')
-  local _, idx_after_version_passed = string.find(cursor_line, '.*Version=".*"')
+  local _, idx_after_version = string.find(cursor_line, '.*version="')
+  local _, idx_after_version_passed = string.find(cursor_line, '.*version="[^"]*"')
   local find_version = false
   if idx_after_version then
     if idx_after_version_passed then
-      find_version = cur_col >= idx_after_version and cur_col <= idx_after_version_passed
+      find_version = cur_col >= idx_after_version and cur_col < idx_after_version_passed
     else
       find_version = cur_col >= idx_after_version
     end
   end
 
-  if package ~= nil and package ~= "" and #package > 3 and not find_version then
+  if package ~= nil and package ~= "" and #package > 0 and not find_version then
     self.nuget:get_packages(callback, string.lower(package))
-  elseif package ~= nil and package ~= "" and #package > 3 and find_version then
+  elseif package ~= nil and package ~= "" and #package > 0 and find_version then
     self.nuget:get_versions(callback, package)
   else
     callback { items = {}, isIncomplete = true }
