@@ -30,7 +30,10 @@ lvim.plugins = {
     config = function()
       local cmp_nuget = require("cmp-nuget")
       cmp_nuget.setup({})
-      table.insert(lvim.builtin.cmp.sources, { name = "nuget" })
+      table.insert(lvim.builtin.cmp.sources, {
+        name = "nuget",
+        keyword_length = 0,
+      })
       lvim.builtin.cmp.formatting.source_names["nuget"] = "(NuGet)"
     end,
   },
@@ -67,7 +70,10 @@ require('cmp-nuget').setup({})
 require('cmp').setup({
   ...,
   sources = {
-    { name = 'nuget' },
+    {
+      name = "nuget",
+      keyword_length = 0,
+    },
     ...
   },
   formatting = {

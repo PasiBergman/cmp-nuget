@@ -41,18 +41,23 @@ function Source:complete(params, callback)
 
   local _, idx_after_version = string.find(cursor_line, '.*%sversion="')
   local _, idx_after_version_passed = string.find(cursor_line, '.*%sversion="[^"]*"')
+
   local find_version = false
+  -- Does line contain Version="
   if idx_after_version then
+    -- Does line contain Version="*"
     if idx_after_version_passed then
+      -- is cursor between quotes on Version=""
       find_version = cur_col >= idx_after_version and cur_col <= idx_after_version_passed
     else
+      -- is cursor after quote on Version="
       find_version = cur_col >= idx_after_version
     end
   end
 
-  if package ~= nil and package ~= "" and #package > 0 and not find_version then
+  if package ~= nil and #package > 2 and not find_version then
     self.nuget:get_packages(callback, string.lower(package))
-  elseif package ~= nil and package ~= "" and #package > 0 and find_version then
+  elseif package ~= nil and #package > 2 and find_version then
     self.nuget:get_versions(callback, package)
   else
     callback { items = {}, isIncomplete = true }
