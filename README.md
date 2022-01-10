@@ -111,8 +111,10 @@ Example of overriding default configuration during setup.
 ```lua
 require('cmp-nuget').setup({
   nuget = {
-    limit = 20,
-    prerelease = true,
+    packages = {
+      limit = 20,
+      prerelease = true,
+    },
   },
 })
 ```
