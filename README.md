@@ -61,8 +61,6 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'PasiBergman/cmp-nuget'
 ```
 
-For [packer](https://github.com/wbthomason/packer.nvim):
-
 Run the `setup` function and add the source
 
 ```lua
