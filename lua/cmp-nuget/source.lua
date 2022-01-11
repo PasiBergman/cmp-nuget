@@ -14,7 +14,7 @@ Source.new = function(overrides)
   self.config = vim.tbl_extend("force", require "cmp-nuget.config", overrides or {})
 
   for _, item in ipairs(self.config.filetypes) do
-    self.filetypes[item] = true
+    self.filetypes[string.lower(item)] = true
   end
 
   for _, item in ipairs(self.config.file_extensions) do
@@ -49,7 +49,7 @@ function Source:complete(params, callback)
   -- is cursor between quotes on include="" and user has typed at least 3 chars
   if
     package ~= nil
-    and #package > 2
+    and #package >= 3
     and col_before_package ~= nil
     and cur_col > col_before_package
     and (col_after_package == nil or cur_col <= col_after_package)
@@ -68,7 +68,7 @@ function Source:complete(params, callback)
   end
 
   if search_package then
-    self.nuget:get_packages(callback, string.lower(package))
+    self.nuget:get_packages(callback, package)
   elseif find_version and package ~= nil then
     self.nuget:get_versions(callback, package)
   else
@@ -89,10 +89,13 @@ function Source:get_debug_name()
 end
 
 function Source:is_available()
+  local ext = string.lower(vim.fn.expand "%:e" or "no-extension")
+  local ft = string.lower(vim.bo.filetype or "no-filetype")
+
   return self.filetypes["*"] ~= nil
-    or self.filetypes[vim.bo.filetype] ~= nil
+    or self.filetypes[ft] ~= nil
     or self.file_extensions["*"] ~= nil
-    or self.file_extensions[string.lower(vim.fn.expand "%:e")] ~= nil
+    or self.file_extensions[ext] ~= nil
 end
 
 return Source
