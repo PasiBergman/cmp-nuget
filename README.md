@@ -3,9 +3,6 @@
 Completion source for [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) helping to
 autocomplete NuGet packages and versions on .csproj files.
 
-**This plugin is in alpha stage, i.e. under development (incl. bugs).**
-Feel free to contribute.
-
 ![cmp-nuget in action](./assets/cmp-nuget.gif?raw=true)
 
 ## Requirements
