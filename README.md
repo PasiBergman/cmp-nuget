@@ -14,6 +14,37 @@ autocomplete NuGet packages and versions on .csproj files.
 
 ## Installation
 
+### LazyVim
+
+In a cmp configuration file, e.g. `~/.config/nvim/lua/plugins/cmp-nuget.lua` add the following configuration:
+
+```lua
+return {
+  {
+    "nvim-cmp",
+    dependencies = {
+      "PasiBergman/cmp-nuget",
+    },
+
+    opts = function(_, opts)
+      local nuget = require("cmp-nuget")
+      nuget.setup({})
+
+      table.insert(opts.sources, 1, {
+        name = "nuget",
+      })
+
+      opts.formatting.format = function(entry, vim_item)
+        if entry.source.name == "nuget" then
+          vim_item.kind = "NuGet"
+        end
+        return vim_item
+      end
+    end,
+  },
+}
+```
+
 ### LunarVim
 
 In your [LunarVim](https://lunarvim.org) cofiguration file:
